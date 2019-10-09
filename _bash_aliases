@@ -1,0 +1,20 @@
+## -*- default-directory: "~/.dotfiles/"; -*-
+
+# Misc
+alias httpd='screen -S httpd python3 -m http.server 8001' # --bind 127.0.0.1
+alias oct='octave-cli -q'
+alias sr='screen -dr'
+alias tmp='mkdir /tmp/$$ ; cd /tmp/$$'
+alias untmp='rm -rf /tmp/$$'
+alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" $(tput cols)) |
+alias sql='sqlite3 -interactive :memory:'
+alias writeback='watch -n0.5 grep Writeback: /proc/meminfo'
+
+# Media
+alias adump='mpv --untimed -vd=dummy -vo null -ao pcm'
+alias m='mpv --realy-quiet'
+alias ms='mpv --really-quiet --shuffle'
+alias npr='mpv http://wamu-1.streamguys.com'
+alias y='youtube-dl --no-mtime --restrict-filenames'
+
+
