@@ -1,0 +1,48 @@
+## -*- default-directory: "~/.dotfiles/"; -*-
+
+[core]
+    autoclrf = false
+    whitespace = cr-at-eol
+
+[color]
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
+
+[fetch]
+    prune = true
+
+[push]
+    default = simple
+
+[pull]
+    rebase = true
+
+[alias]
+    lol = log --graph --decorate --pretty=oneline --abbrev-commit
+    lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+    trim = reflog expire --expire-unreachable=now --all
+    chop = gc --prune=now
+    optimize = repack -a -d -f --depth=250 --window=250
+    pf = pull --ff-only
+    pr = !sh -c 'git fetch --force origin pull/$1/head:pr-$1' -
+    host = daemon --base-path=. --reuseaddr --export-all
+    whost = daemon --base-path=. --reuseaddr --export-all --enable=receive-pack
+    addw = -c interactive.diffFilter='git diff --color=always --word-diff' add -p
+    vt = -c gpg.program=gpg verify-tag
+    vc = -c gpg.program=gpg verify-commit
+
+[sendemail]
+    smtpserver = localhost
+    smtpserverport = 2525
+
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+
+[mergetool]
+    prompt = false
+
+[gpg]
+    program = passphrase2pgp
