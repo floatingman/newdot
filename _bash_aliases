@@ -12,8 +12,8 @@ alias writeback='watch -n0.5 grep Writeback: /proc/meminfo'
 
 # Media
 alias adump='mpv --untimed -vd=dummy -vo null -ao pcm'
-alias m='mpv --realy-quiet'
-alias ms='mpv --really-quiet --shuffle'
+alias m='mpv'
+alias ms='mpv --shuffle'
 alias npr='mpv http://wamu-1.streamguys.com'
 alias y='youtube-dl --no-mtime --restrict-filenames'
 

@@ -1,0 +1,26 @@
+#########
+# Media #
+#########
+
+# Toggle mute
+XF86AudioMute
+   pulseaudio-ctl mute
+
+# Toggle mic mute
+XF86AudioMicMute
+    pulseaudio-ctl mute-input
+
+# Change volume
+XF86Audio{Raise,Lower}Volume
+    pulseaudio-ctl {up,down} 2
+
+# Change volume
+super + {k,j}
+    pulseaudio-ctl {up,down} 2
+
+super + shift + {k,j}
+  pulseaudio-ctl {up,down} 10
+
+# Change screen brightness
+XF86MonBrightness{Up,Down}
+    light -{A,U} 10

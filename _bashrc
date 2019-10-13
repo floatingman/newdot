@@ -43,6 +43,7 @@ export REALNAME="Daniel Newman"
 export EMAIL="dwnewman78@gmail.com"
 export GIT_COMMITTER_NAME="$REALNAME"
 export GIT_AUTHOR_NAME="$REALNAME"
+export KEYID="5EFF1854151D190122A702DFC7B1A7755550807C"
 
 ## PATH variables
 add() {
@@ -108,7 +109,35 @@ export LD_LIBRARY_PATH
 export LD_RUN_PATH
 export PKG_CONFIG_PATH
 
- ## Custom Colors
+## Go
+_golatest() {
+    local r
+    if ! sort -rV </dev/null >/dev/null 2>&1; then
+        # Abort for crappy versions of sort
+        return
+    fi
+    for dir in "$@"; do
+        if [ -d "$dir" ]; then
+            r="$(find "$dir" -maxdepth 1 -name 'go-*' | sort -rV | head -n1)"
+            if [ -n "$r" ]; then
+                printf '%s' "$r"
+                break
+            fi
+        fi
+    done
+}
+PATH=$(add "${GOPATH:-$HOME/go}/bin" "$PATH")
+golatest="$(_golatest "${GOPATH:-$HOME/go}")"
+if [ -n "$golatest" ]; then
+    PATH=$(add "$golatest/bin" "$PATH")
+fi
+
+## Agents
+if command -v keychain > /dev/null 2>&1; then
+    eval $(keychain --eval --quiet)
+fi
+
+## Custom Colors
 colorscheme() {
   if [[ "$-" == *"i"* ]] && [[ "$TERM" != "dumb" ]]; then
     echo -ne '\e]4;0;#2E3436\a'   # black
