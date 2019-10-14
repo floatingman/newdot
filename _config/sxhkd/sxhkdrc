@@ -24,3 +24,27 @@ super + shift + {k,j}
 # Change screen brightness
 XF86MonBrightness{Up,Down}
     light -{A,U} 10
+
+################
+# Applications #
+################
+
+# Launch terminal
+super + t
+  $TERMINAL
+
+# Launch web browser
+super + w
+    firefox -P Accounts
+
+# Launch web browser with work profile
+super + shift + w
+    firefox -P Work
+
+# Launch application launcher
+super + space
+    rofi -show run
+
+# Launch window switcher
+alt + Tab
+    rofi -show window

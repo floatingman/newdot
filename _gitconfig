@@ -1,14 +1,48 @@
 ## -*- default-directory: "~/.dotfiles/"; -*-
-
+[user]
+    name = Daniel Newman
+    email = dwnewman78@gmail.com
+    signingkey = C7B1A7755550807C
+    
 [core]
-    autoclrf = false
-    whitespace = cr-at-eol
+    excludesfile = ~/.gitignore
+    attributesfile = ~/.gitattributes
+    editor = nvim
+    autocrlf = input
+    trustctime = false
+    precomposeunicode = false
 
-[color]
-    branch = auto
-    diff = auto
-    interactive = auto
-    status = auto
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  commit = green bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+[color "diff-highlight"]
+  oldNormal = red bold
+  oldHighlight = "red bold 52"
+  newNormal = "green bold"
+  newHighlight = "green bold 22"
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+[diff]
+  tool = vimdiff
+  compactionHeuristic = true
+  indentHeuristic = true
+[difftool]
+  prompt = false
+[diff "json"]
+  textconv = python -m json.tool
+[diff "word"]
+  textconv = docx2txt
 
 [fetch]
     prune = true
@@ -20,6 +54,28 @@
     rebase = true
 
 [alias]
+    aa = add --all
+    co = checkout
+    cob = checkout -b
+    rso = remote show origin
+    dc = diff --cached
+    ds = diff --staged
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%Creset' --abbrev-commit --date=relative
+    st = status -sb
+    unpushed = log --branches --not --remotes --simplify-by-decoration --decorate --oneline
+    # counts how far behind current branch is
+    count = "!f() { compareBranch=${1-master}; git rev-list --count HEAD ^$compareBranch; }; f"
+    # guesses which email address to use for a repo
+    email-guess = !. ~/.git-scripts/email-guess.sh
+    # subtree add
+    sba = "!f() { git subtree add --prefix $2 $1 master --squash; }; f"
+    # subtree update
+    sbu = "!f() { git subtree pull --prefix $2 $1 master --squash; }; f"
+    # cool trick to use for demos
+    next = '!git checkout `git rev-list HEAD..demo-end | tail -1`'
+    prev = 'checkout HEAD^'
+    remote-merged = !. ~/.git-scripts/git-remote-merged
+    remote-notmerged = !. ~/.git-scripts/git-remote-notmerged
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
     lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
     trim = reflog expire --expire-unreachable=now --all
@@ -32,10 +88,6 @@
     addw = -c interactive.diffFilter='git diff --color=always --word-diff' add -p
     vt = -c gpg.program=gpg verify-tag
     vc = -c gpg.program=gpg verify-commit
-
-[sendemail]
-    smtpserver = localhost
-    smtpserverport = 2525
 
 [merge]
     tool = vimdiff

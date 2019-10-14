@@ -8,6 +8,54 @@ set +o histexpand
 bind '\C-w:backward-kill-word' 2>/dev/null
 stty -ixon >/dev/null 2>&1 || true # disable flow control (XON/XOFF)
 
+## Bash Utility Functions
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+_islinux=false
+[[ "$(uname -s)" =~ Linux|GNU|GNU/* ]] && _islinux=true
+
+_ismac=false
+[[ "$(uname -s)" =~ Darwin ]] && _ismac=true
+
+_isubuntu=false
+[[ "$(uname -v)" =~ Ubuntu ]] && _isubuntu=true
+_isarch=false
+[[ -f /etc/arch-release ]] && _isarch=true
+
+_isxrunning=false
+[[ -n "$DISPLAY" ]] && _isxrunning=true
+
+_isroot=false
+[[ $UID -eq 0 ]] && _isroot=true
+
+# add directories to $PATH
+_add_to_path() {
+    local path
+
+    for path; do
+        [[ -d "$path" ]] && [[ ! ":${PATH}:" =~ :${path}: ]] && export PATH=${path}:$PATH
+    done
+}
+
+# source a file if readable
+_source () {
+    local file="$1"
+    [[ -r "$file" ]] || return 1
+    . "$file"
+}
+
+_load_bash_completion_files() {
+    FILES="$HOME/.bash_completion/*.bash"
+    for config_file in $FILES
+    do
+        if [[ -e ${config_file} ]]; then
+            source $config_file
+        fi
+    done
+}
+
+
 ## Completions
 _systemctl() {
   _completion_loader systemctl
@@ -27,8 +75,6 @@ _PS1() {
 }
 PS1='\[\e[1;32m\]\h\[\e[m\]\
 \[\e[1;35m\]$(_PS1 "$PWD" 30)\[\e[m\] '
-export EDITOR="vim"
-export BROWSER="firefox"
 if [ "$TERM" = "dumb" ]; then
   PS1="> "
 fi
@@ -44,6 +90,56 @@ export EMAIL="dwnewman78@gmail.com"
 export GIT_COMMITTER_NAME="$REALNAME"
 export GIT_AUTHOR_NAME="$REALNAME"
 export KEYID="5EFF1854151D190122A702DFC7B1A7755550807C"
+
+## Exports
+export EDITOR="nvim";
+export TERMINAL="urxvt";
+export BROWSER="firefox";
+export READER="zathura"
+export FILE="ranger"
+export SUDO_ASKPASS="$HOME/bin/tools/dmenupass"
+export DOTFILES_PATH="$HOME/.dotfiles"
+export HISTIGNORE="&:ls:[bf]g:exit:reset:clear:cd*";
+export HISTCONTROL="ignoreboth:erasedups";
+export HISTSIZE= HISTFILESIZE=
+export HISTTIMEFORMAT="%c "
+# For the fuzzy finder
+if _have fzf; then
+  export FZF_DEFAULT_OPTS='--color=bg+:24 --reverse'
+fi
+
+# standard in linux
+if $_islinux; then
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.utf8
+fi
+
+# less
+if _have less; then
+    export PAGER=less
+
+    LESS=-R # use -X to avoid sending terminal initialization
+    LESS_TERMCAP_mb=$'\e[01;31m'
+    LESS_TERMCAP_md=$'\e[01;36m'
+    LESS_TERMCAP_me=$'\e[0m'
+    LESS_TERMCAP_se=$'\e[0m'
+    LESS_TERMCAP_so=$'\e[01;44;33m'
+    LESS_TERMCAP_ue=$'\e[0m'
+    LESS_TERMCAP_us=$'\e[01;32m'
+    export ${!LESS@}
+fi
+
+# Don’t clear the screen after quitting a manual page
+export MANPAGER="less -X";
+
+# Gtags
+export GTAGSCONF=/usr/local/share/gtags/gtags.conf
+export GTAGSLABEL=ctags
+
+# Let's keep a virtualenv workon directory
+[[ -d "$HOME/.venvs/" ]] && export WORKON_HOME="$HOME/.venvs/"
+
+_source /usr/bin/virtualenvwrapper_lazy.sh
 
 ## PATH variables
 add() {
@@ -83,10 +179,17 @@ if [ "$ORIG_SAVED" != yes ]; then
   export ORIG_LD_RUN_PATH="$LD_LD_RUN_PATH"
   export ORIG_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
 fi
-PATH=$(add /usr/sbin "$PATH")
-PATH=$(add /sbin "$PATH")
-PATH=$(add ~/.local/games "$PATH")
-PATH=$(add ~/.local/bin "$PATH")
+if $_ismac; then
+  [[ -r "$HOME/bin" ]] && export PATH="$PATH:$(du -I .git "$HOME/bin" | cut -f2 | tr '\n' ':')"
+  [[ -r "$HOME/.bin" ]] && export PATH="$PATH:$(du -I .git "$HOME/.bin" | cut -f2 | tr '\n' ':')"
+else
+  [[ -r "$HOME/bin" ]] && export PATH="$PATH:$(du --exclude=.git "$HOME/bin" | cut -f2 | tr '\n' ':')"
+  [[ -r "$HOME/.bin" ]] && export PATH="$PATH:$(du --exclude=.git "$HOME/.bin" | cut -f2 | tr '\n' ':')"
+fi
+
+[[ -r "$HOME/.local/bin" ]] && _add_to_path "$HOME/.local/bin"
+_add_to_path "/usr/sbin"
+_add_to_path "/sbin"
 C_INCLUDE_PATH=$(add ~/.local/include "$C_INCLUDE_PATH")
 CPLUS_INCLUDE_PATH=$(add ~/.local/include "$CPLUS_INCLUDE_PATH")
 LIBRARY_PATH=$(add ~/.local/lib "$LIBRARY_PATH")
@@ -183,6 +286,11 @@ source ~/.bash_aliases
 if [ -e /etc/bash_completion ]; then
   source /etc/bash_completion
 fi
+
+if [ -d "$HOME/.asdf" ]; then
+   . $HOME/.asdf/asdf.sh
+   . $HOME/.asdf/completions/asdf.bash
+fi   
 
 ## Any last local overrides
 if [ -f ~/.bash_local ]; then

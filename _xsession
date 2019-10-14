@@ -1,2 +1,0 @@
-xset -b
-bash -lc 'exec openbox-session'

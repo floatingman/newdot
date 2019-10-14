@@ -1,0 +1,25 @@
+.tern-port
+TAGS
+GTAGS
+GPATH
+GRTAGS
+GSYM*
+.DS_Store
+.dir-locals.el
+LUCENE-*.patch
+.lein-repl*
+pom.xml.asc
+core/data
+.projectile
+
+# Python #
+##########
+*.py[co]
+*.egg*
+build/
+dist/
+
+
+# Editors #
+###########
+.*.sw[a-z]

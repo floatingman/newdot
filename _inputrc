@@ -1,1 +1,7 @@
+# ignore case when tab-completing paths
+set completion-ignore-case on
+
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+set show-all-if-ambiguous on
 set bind-tty-special-chars off
